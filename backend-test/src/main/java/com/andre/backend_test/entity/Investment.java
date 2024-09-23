@@ -14,6 +14,8 @@ public class Investment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String owner;
+
     private Date creationDate;
 
     private Double value;
@@ -22,11 +24,13 @@ public class Investment {
     }
 
     public Investment(InvestmentDTO investmentDTO){
+        owner = investmentDTO.getOwner();
         creationDate = investmentDTO.getCreationDate();
         value = investmentDTO.getValue();
     }
 
-    public Investment(Date creationDate, Double value) {
+    public Investment(String owner, Date creationDate, Double value) {
+        this.owner= owner;
         this.creationDate = creationDate;
         this.value = value;
     }
@@ -37,6 +41,14 @@ public class Investment {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public Date getCreationDate() {

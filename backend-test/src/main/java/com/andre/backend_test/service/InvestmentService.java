@@ -14,9 +14,11 @@ public class InvestmentService {
    @Autowired
    private InvestmentRepository investmentRepository;
 
-    public void createInvestment(InvestmentDTO investmentDTO){
+    public Investment createInvestment(InvestmentDTO investmentDTO){
         Investment entityInvestment = new Investment(investmentDTO);
         investmentRepository.save(entityInvestment);
+
+        return entityInvestment;
     }
 
     public void getInvestment(){
