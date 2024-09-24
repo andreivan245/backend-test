@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,11 +58,11 @@ public class InvestmentService {
 
         investmentRepository.save(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
 
-        return apllyTax(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
+        return applyTax(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
     }
 
-    public void getListInvestments(){
-
+    public List<Investment> getListInvestments(String owner){
+        return investmentRepository.findByOwner(owner);
     }
 
     public Boolean newInvestmentIsValid(LocalDate date, Double value){
@@ -113,7 +113,7 @@ public class InvestmentService {
         return investment;
     }
 
-    public Double apllyTax(Investment investment){
+    public Double applyTax(Investment investment){
         double gains = investment.getWithdrawnValue()-investment.getValue();
 
         long monthsBetween = ChronoUnit.MONTHS.between(investment.getWithdrawnDate(),investment.getCreationDate());
