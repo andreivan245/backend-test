@@ -16,6 +16,9 @@ import java.util.Optional;
 public class InvestmentService {
 
     private static final Double WINRATE = 0.52;
+    private static final Double TAXLESSTHANONEYEAR = 0.225;
+    private static final Double TAXBETWEENTWOANDONEYEAR = 0.185;
+    private static final Double TAXMORETHANTWOYEARS = 0.150;
 
     @Autowired
     private InvestmentRepository investmentRepository;
@@ -43,7 +46,7 @@ public class InvestmentService {
 
     }
 
-    public Investment withdrawalInvestment(Long id, LocalDate withdrawalDay){
+    public Double withdrawalInvestment(Long id, LocalDate withdrawalDay){
         Optional<Investment> optionalEntityInvestment = investmentRepository.findById(id);
 
         Investment entityInvestment = optionalEntityInvestment.orElseThrow(
@@ -53,15 +56,16 @@ public class InvestmentService {
             throw new RuntimeException("Withdrawal day is invalid");
         }
 
-        return investmentRepository.save(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
+        investmentRepository.save(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
 
+        return apllyTax(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
     }
 
     public void getListInvestments(){
 
     }
 
-    public boolean newInvestmentIsValid(LocalDate date, Double value){
+    public Boolean newInvestmentIsValid(LocalDate date, Double value){
         LocalDate today = LocalDate.now();
 
         if(today.isBefore(date) || value < 0) return false;
@@ -85,7 +89,7 @@ public class InvestmentService {
         return new InvestmentViewDTO(initialAmount,expectedBalance);
     }
 
-    public boolean withdrawalIsValid(Investment investment, LocalDate withdrawalDay){
+    public Boolean withdrawalIsValid(Investment investment, LocalDate withdrawalDay){
         if(withdrawalDay.isBefore(investment.getCreationDate())) return false;
 
         return true;
@@ -93,7 +97,6 @@ public class InvestmentService {
 
     public Investment withdrawalBalanceCalculation(Investment investment, LocalDate withdrawalDay){
         Double expectedBalance = investment.getValue();
-
 
         long monthsBetween = ChronoUnit.MONTHS.between(withdrawalDay,investment.getCreationDate());
 
@@ -108,5 +111,20 @@ public class InvestmentService {
         investment.setWithdrawnValue(expectedBalance);
 
         return investment;
+    }
+
+    public Double apllyTax(Investment investment){
+        double gains = investment.getWithdrawnValue()-investment.getValue();
+
+        long monthsBetween = ChronoUnit.MONTHS.between(investment.getWithdrawnDate(),investment.getCreationDate());
+
+        if(monthsBetween < 12){
+            return gains - (gains * TAXLESSTHANONEYEAR);
+        } else if (monthsBetween > 12 && monthsBetween < 24) {
+            return gains - (gains * TAXBETWEENTWOANDONEYEAR);
+        }else {
+            return gains - (gains * TAXMORETHANTWOYEARS);
+        }
+
     }
 }
