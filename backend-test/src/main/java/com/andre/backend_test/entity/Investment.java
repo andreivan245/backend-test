@@ -9,7 +9,6 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "tb_investments")
 public class Investment {
 
     @Id
