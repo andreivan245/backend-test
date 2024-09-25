@@ -1,14 +1,14 @@
 package com.andre.backend_test.controller;
 
 import com.andre.backend_test.dto.InvestmentDTO;
+import com.andre.backend_test.dto.WithdrawalDTO;
 import com.andre.backend_test.service.InvestmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+
 
 @RestController
 @RequestMapping("/investment")
@@ -28,8 +28,8 @@ public class InvestmentController {
     }
 
     @PostMapping("/withdrawal/{id}")
-    public ResponseEntity withdrawalInvestment(@RequestBody Long id, LocalDate withdrawalDay) {
-        return new ResponseEntity(investmentService.withdrawalInvestment(id, withdrawalDay), HttpStatus.OK);
+    public ResponseEntity withdrawalInvestment(@PathVariable Long id, @RequestBody WithdrawalDTO withdrawalDTO) {
+        return new ResponseEntity(investmentService.withdrawalInvestment(id, withdrawalDTO.getWithdrawalDay()), HttpStatus.OK);
     }
 
     @GetMapping("/")

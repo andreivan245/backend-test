@@ -19,5 +19,20 @@ public class InvestmentViewDTO {
         this.initialValue = initialValue;
         this.expectedBalance = expectedBalance;
     }
-    
+
+    public Double getExpectedBalance() {
+        return expectedBalance;
+    }
+
+    public void setExpectedBalance(Double expectedBalance) {
+        this.expectedBalance = expectedBalance;
+    }
+
+    public Double getInitialValue() {
+        return initialValue;
+    }
+
+    public void setInitialValue(Double initialValue) {
+        this.initialValue = initialValue;
+    }
 }

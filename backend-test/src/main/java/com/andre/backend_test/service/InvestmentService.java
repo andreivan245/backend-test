@@ -47,10 +47,7 @@ public class InvestmentService {
     }
 
     public Double withdrawalInvestment(Long id, LocalDate withdrawalDay){
-        Optional<Investment> optionalEntityInvestment = investmentRepository.findById(id);
-
-        Investment entityInvestment = optionalEntityInvestment.orElseThrow(
-                () -> new RuntimeException("Id not found: " + id));
+        Investment entityInvestment = findEntityById(id);
 
         if(!withdrawalIsValid(entityInvestment,withdrawalDay)){
             throw new RuntimeException("Withdrawal day is invalid");
@@ -58,7 +55,8 @@ public class InvestmentService {
 
         investmentRepository.save(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
 
-        return applyTax(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
+
+        return applyTax(id);
     }
 
     public List<Investment> getListInvestments(String owner){
@@ -78,19 +76,20 @@ public class InvestmentService {
         Double expectedBalance = investment.getValue();
         LocalDate today = LocalDate.now();
 
-        long monthsBetween = ChronoUnit.MONTHS.between(today,investment.getCreationDate());
+        long monthsBetween = ChronoUnit.MONTHS.between(investment.getCreationDate(),today);
 
         int monthsBetweenInt = (int) monthsBetween;
 
         for(int i = 0; i < monthsBetweenInt; i++){
-            expectedBalance = expectedBalance*WINRATE;
+            expectedBalance = expectedBalance + (expectedBalance*WINRATE);
         }
 
-        return new InvestmentViewDTO(initialAmount,expectedBalance);
+        return new InvestmentViewDTO(initialAmount,Math.floor(expectedBalance));
     }
 
     public Boolean withdrawalIsValid(Investment investment, LocalDate withdrawalDay){
-        if(withdrawalDay.isBefore(investment.getCreationDate())) return false;
+        LocalDate today = LocalDate.now();
+        if(withdrawalDay.isBefore(investment.getCreationDate()) || withdrawalDay.isAfter(today)) return false;
 
         return true;
     }
@@ -98,33 +97,50 @@ public class InvestmentService {
     public Investment withdrawalBalanceCalculation(Investment investment, LocalDate withdrawalDay){
         Double expectedBalance = investment.getValue();
 
-        long monthsBetween = ChronoUnit.MONTHS.between(withdrawalDay,investment.getCreationDate());
+        if(investment.getAlreadyWithdrawn()){
+            throw new RuntimeException("Value already withdrawn");
+        }
+
+        long monthsBetween = ChronoUnit.MONTHS.between(investment.getCreationDate(),withdrawalDay);
 
         int monthsBetweenInt = (int) monthsBetween;
 
         for(int i = 0; i < monthsBetweenInt; i++){
-            expectedBalance = expectedBalance*WINRATE;
+            expectedBalance = expectedBalance + (expectedBalance*WINRATE);
         }
 
         investment.setAlreadyWithdrawn(true);
         investment.setWithdrawnDate(withdrawalDay);
-        investment.setWithdrawnValue(expectedBalance);
+        investment.setWithdrawnValue(Math.floor(expectedBalance));
 
         return investment;
     }
 
-    public Double applyTax(Investment investment){
-        double gains = investment.getWithdrawnValue()-investment.getValue();
+    public Double applyTax(Long id){
+        Investment entityInvestment = findEntityById(id);
 
-        long monthsBetween = ChronoUnit.MONTHS.between(investment.getWithdrawnDate(),investment.getCreationDate());
+        double gains = entityInvestment.getWithdrawnValue()-entityInvestment.getValue();
+        Double netGain;
 
-        if(monthsBetween < 12){
-            return gains - (gains * TAXLESSTHANONEYEAR);
-        } else if (monthsBetween > 12 && monthsBetween < 24) {
-            return gains - (gains * TAXBETWEENTWOANDONEYEAR);
+        long monthsBetween = ChronoUnit.MONTHS.between(entityInvestment.getCreationDate(),entityInvestment.getWithdrawnDate());
+
+        int monthsBetweenInt = (int) monthsBetween;
+
+        if(monthsBetweenInt  < 12){
+            netGain = gains - (gains * TAXLESSTHANONEYEAR);
+        } else if (monthsBetweenInt  > 12 && monthsBetweenInt < 24) {
+            netGain = gains - (gains * TAXBETWEENTWOANDONEYEAR);
         }else {
-            return gains - (gains * TAXMORETHANTWOYEARS);
+            netGain = gains - (gains * TAXMORETHANTWOYEARS);
         }
 
+        return Math.floor(entityInvestment.getValue() + netGain);
+    }
+
+    public Investment findEntityById(Long id){
+        Optional<Investment> optionalEntityInvestment = investmentRepository.findById(id);
+
+        return optionalEntityInvestment.orElseThrow(
+                () -> new RuntimeException("Id not found: " + id));
     }
 }
