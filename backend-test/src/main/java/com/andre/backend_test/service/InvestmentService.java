@@ -3,6 +3,10 @@ package com.andre.backend_test.service;
 import com.andre.backend_test.dto.InvestmentDTO;
 import com.andre.backend_test.dto.InvestmentViewDTO;
 import com.andre.backend_test.entity.Investment;
+import com.andre.backend_test.exception.InvestmentAlreadyWithdrawnException;
+import com.andre.backend_test.exception.InvestmentNotFoundException;
+import com.andre.backend_test.exception.NewInvestmentIsInvalidException;
+import com.andre.backend_test.exception.WithdrawalInvestmentIsInvalidException;
 import com.andre.backend_test.repository.InvestmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,28 +19,26 @@ import java.util.Optional;
 @Service
 public class InvestmentService {
 
-    private static final Double WINRATE = 0.52;
-    private static final Double TAXLESSTHANONEYEAR = 0.225;
-    private static final Double TAXBETWEENTWOANDONEYEAR = 0.185;
-    private static final Double TAXMORETHANTWOYEARS = 0.150;
+    private static final double WINRATE = 0.52;
+    private static final double TAXLESSTHANONEYEAR = 0.225;
+    private static final double TAXBETWEENTWOANDONEYEAR = 0.185;
+    private static final double TAXMORETHANTWOYEARS = 0.150;
 
     @Autowired
     private InvestmentRepository investmentRepository;
 
     public Investment createInvestment(InvestmentDTO investmentDTO){
         if (!newInvestmentIsValid(investmentDTO.getCreationDate(), investmentDTO.getValue())){
-            throw new RuntimeException("Invalid investment");
+            throw new NewInvestmentIsInvalidException("Investment invalid");
         }
 
         Investment entityInvestment = new Investment(investmentDTO);
+
         return investmentRepository.save(entityInvestment);
     }
 
     public InvestmentViewDTO getInvestmentView(Long id){
-        Optional<Investment> optionalEntityInvestment = investmentRepository.findById(id);
-
-        Investment entityInvestment = optionalEntityInvestment.orElseThrow(
-                () -> new RuntimeException("Id not found: " + id));
+        Investment entityInvestment = findEntityById(id);
 
         if(entityInvestment.getAlreadyWithdrawn()){
             return new InvestmentViewDTO(entityInvestment.getValue(), entityInvestment.getWithdrawnValue());
@@ -50,7 +52,7 @@ public class InvestmentService {
         Investment entityInvestment = findEntityById(id);
 
         if(!withdrawalIsValid(entityInvestment,withdrawalDay)){
-            throw new RuntimeException("Withdrawal day is invalid");
+            throw new WithdrawalInvestmentIsInvalidException("Withdrawal day is invalid");
         }
 
         investmentRepository.save(withdrawalBalanceCalculation(entityInvestment,withdrawalDay));
@@ -72,8 +74,8 @@ public class InvestmentService {
     }
 
     public InvestmentViewDTO expectedBalanceCalculationView(Investment investment){
-        Double initialAmount = investment.getValue();
-        Double expectedBalance = investment.getValue();
+        double initialAmount = investment.getValue();
+        double expectedBalance = investment.getValue();
         LocalDate today = LocalDate.now();
 
         long monthsBetween = ChronoUnit.MONTHS.between(investment.getCreationDate(),today);
@@ -89,16 +91,17 @@ public class InvestmentService {
 
     public Boolean withdrawalIsValid(Investment investment, LocalDate withdrawalDay){
         LocalDate today = LocalDate.now();
+
         if(withdrawalDay.isBefore(investment.getCreationDate()) || withdrawalDay.isAfter(today)) return false;
 
         return true;
     }
 
     public Investment withdrawalBalanceCalculation(Investment investment, LocalDate withdrawalDay){
-        Double expectedBalance = investment.getValue();
+        double expectedBalance = investment.getValue();
 
         if(investment.getAlreadyWithdrawn()){
-            throw new RuntimeException("Value already withdrawn");
+            throw new InvestmentAlreadyWithdrawnException("Value already withdrawn");
         }
 
         long monthsBetween = ChronoUnit.MONTHS.between(investment.getCreationDate(),withdrawalDay);
@@ -120,7 +123,7 @@ public class InvestmentService {
         Investment entityInvestment = findEntityById(id);
 
         double gains = entityInvestment.getWithdrawnValue()-entityInvestment.getValue();
-        Double netGain;
+        double netGain;
 
         long monthsBetween = ChronoUnit.MONTHS.between(entityInvestment.getCreationDate(),entityInvestment.getWithdrawnDate());
 
@@ -141,6 +144,6 @@ public class InvestmentService {
         Optional<Investment> optionalEntityInvestment = investmentRepository.findById(id);
 
         return optionalEntityInvestment.orElseThrow(
-                () -> new RuntimeException("Id not found: " + id));
+                () -> new InvestmentNotFoundException("Investment id not found: " + id));
     }
 }

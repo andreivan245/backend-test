@@ -2,10 +2,10 @@ package com.andre.backend_test.entity;
 
 import com.andre.backend_test.dto.InvestmentDTO;
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
+
 
 import java.time.LocalDate;
-import java.util.Date;
+
 
 
 @Entity
@@ -19,13 +19,13 @@ public class Investment {
 
     private LocalDate creationDate;
 
-    private Double value;
+    private double value;
 
-    private Boolean alreadyWithdrawn;
+    private boolean alreadyWithdrawn;
 
     private LocalDate withdrawnDate;
 
-    private Double withdrawnValue;
+    private double withdrawnValue;
 
     public Investment(){
     }
@@ -36,10 +36,10 @@ public class Investment {
         value = investmentDTO.getValue();
         alreadyWithdrawn = false;
         withdrawnDate = null;
-        withdrawnValue = null;
+        withdrawnValue = 0;
     }
 
-    public Investment(String owner, LocalDate creationDate, Double value, Boolean alreadyWithdrawn, LocalDate withdrawnDate, Double withdrawnValue) {
+    public Investment(String owner, LocalDate creationDate, double value, boolean alreadyWithdrawn, LocalDate withdrawnDate, double withdrawnValue) {
         this.owner= owner;
         this.creationDate = creationDate;
         this.value = value;
@@ -72,19 +72,19 @@ public class Investment {
         this.creationDate = creationDate;
     }
 
-    public Double getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
-    public Boolean getAlreadyWithdrawn() {
+    public boolean getAlreadyWithdrawn() {
         return alreadyWithdrawn;
     }
 
-    public void setAlreadyWithdrawn(Boolean alreadyWithdrawn) {
+    public void setAlreadyWithdrawn(boolean alreadyWithdrawn) {
         this.alreadyWithdrawn = alreadyWithdrawn;
     }
 
@@ -96,11 +96,11 @@ public class Investment {
         this.withdrawnDate = withdrawnDate;
     }
 
-    public Double getWithdrawnValue() {
+    public double getWithdrawnValue() {
         return withdrawnValue;
     }
 
-    public void setWithdrawnValue(Double withdrawnValue) {
+    public void setWithdrawnValue(double withdrawnValue) {
         this.withdrawnValue = withdrawnValue;
     }
 }

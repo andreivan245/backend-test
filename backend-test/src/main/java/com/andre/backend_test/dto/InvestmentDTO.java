@@ -4,7 +4,7 @@ import com.andre.backend_test.entity.Investment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @Component
 public class InvestmentDTO {
@@ -13,18 +13,18 @@ public class InvestmentDTO {
 
     private LocalDate creationDate;
 
-    private Double value;
+    private double value;
 
-    private Boolean alreadyWithdrawn;
+    private boolean alreadyWithdrawn;
 
     private LocalDate withdrawnDate;
 
-    private Double withdrawnValue;
+    private double withdrawnValue;
 
     public InvestmentDTO(){
     }
 
-    public InvestmentDTO(String owner, LocalDate creationDate, Double value, Boolean alreadyWithdrawn, LocalDate withdrawnDate, Double withdrawnValue) {
+    public InvestmentDTO(String owner, LocalDate creationDate, double value, boolean alreadyWithdrawn, LocalDate withdrawnDate, double withdrawnValue) {
         this.owner = owner;
         this.creationDate = creationDate;
         this.value = value;
@@ -58,19 +58,19 @@ public class InvestmentDTO {
         this.creationDate = creationDate;
     }
 
-    public Double getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
-    public Boolean getAlreadyWithdrawn() {
+    public boolean getAlreadyWithdrawn() {
         return alreadyWithdrawn;
     }
 
-    public void setAlreadyWithdrawn(Boolean alreadyWithdrawn) {
+    public void setAlreadyWithdrawn(boolean alreadyWithdrawn) {
         this.alreadyWithdrawn = alreadyWithdrawn;
     }
 
@@ -82,11 +82,11 @@ public class InvestmentDTO {
         this.withdrawnDate = withdrawnDate;
     }
 
-    public Double getWithdrawnValue() {
+    public double getWithdrawnValue() {
         return withdrawnValue;
     }
 
-    public void setWithdrawnValue(Double withdrawnValue) {
+    public void setWithdrawnValue(double withdrawnValue) {
         this.withdrawnValue = withdrawnValue;
     }
 }

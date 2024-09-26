@@ -1,6 +1,5 @@
 package com.andre.backend_test.dto;
 
-import com.andre.backend_test.entity.Investment;
 import org.springframework.stereotype.Component;
 
 
@@ -8,31 +7,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class InvestmentViewDTO {
 
-    private Double initialValue;
+    private double initialValue;
 
-    private Double expectedBalance;
+    private double expectedBalance;
 
     public InvestmentViewDTO(){
     }
 
-    public InvestmentViewDTO(Double initialValue, Double expectedBalance){
+    public InvestmentViewDTO(double initialValue, double expectedBalance){
         this.initialValue = initialValue;
         this.expectedBalance = expectedBalance;
     }
 
-    public Double getExpectedBalance() {
+    public double getExpectedBalance() {
         return expectedBalance;
     }
 
-    public void setExpectedBalance(Double expectedBalance) {
+    public void setExpectedBalance(double expectedBalance) {
         this.expectedBalance = expectedBalance;
     }
 
-    public Double getInitialValue() {
+    public double getInitialValue() {
         return initialValue;
     }
 
-    public void setInitialValue(Double initialValue) {
+    public void setInitialValue(double initialValue) {
         this.initialValue = initialValue;
     }
 }
