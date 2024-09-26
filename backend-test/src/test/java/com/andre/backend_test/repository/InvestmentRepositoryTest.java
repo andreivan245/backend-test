@@ -26,10 +26,10 @@ class InvestmentRepositoryTest {
     private static final double WITHDRAWNVALUE = 0;
 
     @Autowired
-    InvestmentRepository investmentRepository;
+    private InvestmentRepository investmentRepository;
 
     @Autowired
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("Should get list of owner's investments successfully from database")
