@@ -3,10 +3,7 @@ package com.andre.backend_test.service;
 import com.andre.backend_test.dto.InvestmentDTO;
 import com.andre.backend_test.dto.InvestmentViewDTO;
 import com.andre.backend_test.entity.Investment;
-import com.andre.backend_test.exception.InvestmentAlreadyWithdrawnException;
-import com.andre.backend_test.exception.InvestmentNotFoundException;
-import com.andre.backend_test.exception.NewInvestmentIsInvalidException;
-import com.andre.backend_test.exception.WithdrawalInvestmentIsInvalidException;
+import com.andre.backend_test.exception.*;
 import com.andre.backend_test.repository.InvestmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,7 +59,14 @@ public class InvestmentService {
     }
 
     public List<Investment> getListInvestments(String owner){
-        return investmentRepository.findByOwner(owner);
+
+        List<Investment> investmentList = investmentRepository.findByOwner(owner);
+
+        if(investmentList.isEmpty())
+            throw new InvestmentListNotFoundException("Owner not found: " + owner);
+
+        return investmentList;
+
     }
 
     public Boolean newInvestmentIsValid(LocalDate date, Double value){

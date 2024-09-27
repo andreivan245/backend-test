@@ -1,9 +1,6 @@
 package com.andre.backend_test.exception.handler;
 
-import com.andre.backend_test.exception.InvestmentAlreadyWithdrawnException;
-import com.andre.backend_test.exception.InvestmentNotFoundException;
-import com.andre.backend_test.exception.NewInvestmentIsInvalidException;
-import com.andre.backend_test.exception.WithdrawalInvestmentIsInvalidException;
+import com.andre.backend_test.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,5 +62,18 @@ public class RestExceptionHandler {
         error.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(error);
+    }
+
+    @ExceptionHandler(InvestmentListNotFoundException.class)
+    ResponseEntity<ErrorMessage> investmentListNotFound(InvestmentListNotFoundException exception, HttpServletRequest request){
+        ErrorMessage error = new ErrorMessage();
+
+        error.setTimestamp(Instant.now());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setError("Investment list not found");
+        error.setMessage(exception.getMessage());
+        error.setPath(request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }

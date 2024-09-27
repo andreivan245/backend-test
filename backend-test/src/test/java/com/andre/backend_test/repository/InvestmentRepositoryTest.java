@@ -5,7 +5,6 @@ import com.andre.backend_test.entity.Investment;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -24,6 +23,7 @@ class InvestmentRepositoryTest {
     private static final boolean ALREADYWITHDRAWN = false;
     private static final LocalDate WITHDRAWNDATE = null;
     private static final double WITHDRAWNVALUE = 0;
+
 
     @Autowired
     private InvestmentRepository investmentRepository;

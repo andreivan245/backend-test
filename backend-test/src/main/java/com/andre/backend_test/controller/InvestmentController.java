@@ -45,10 +45,6 @@ public class InvestmentController {
 
     @GetMapping("/")
     public ResponseEntity<Stream<InvestmentDTO>> getListInvestments(@RequestParam String owner){
-        if(investmentService.getListInvestments(owner).isEmpty()){
-            throw new RuntimeException("Owner not found: " + HttpStatus.NOT_FOUND);
-        }
-
         return ResponseEntity.ok(investmentService.getListInvestments(owner).stream().map(InvestmentDTO::new));
     }
 }
