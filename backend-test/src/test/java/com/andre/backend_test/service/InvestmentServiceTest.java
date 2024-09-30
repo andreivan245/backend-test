@@ -35,7 +35,7 @@ class InvestmentServiceTest {
     private static final double WITHDRAWNVALUE = 0;
     private static final LocalDate WITHDRAWALDAY = LocalDate.now();
 
-    private static final Investment investment = new Investment(OWNER, CREATIONDATE, VALUE, ALREADYWITHDRAWN, WITHDRAWNDATE, WITHDRAWNVALUE);;
+    private static final Investment investment = new Investment(OWNER, CREATIONDATE, VALUE, ALREADYWITHDRAWN, WITHDRAWNDATE, WITHDRAWNVALUE);
     private static final InvestmentDTO investmentDTO = new InvestmentDTO(investment);
 
     @Autowired
